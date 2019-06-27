@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.internal.matchers.Null;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -35,6 +36,14 @@ public class DishWasherTest {
         when(door.closed()).thenReturn(true);
         assertEquals(dishWasher.start(programConfiguration).getStatus(),Status.DOOR_OPEN_ERROR);
     }
+
+    @Test
+    public void testIfFilterIsClean(){
+        programConfiguration = ProgramConfiguration.builder().withProgram(WashingProgram.ECO).withTabletsUsed(true).build();
+        when(door.closed()).thenReturn(false);
+        assertEquals(dishWasher.start(programConfiguration).getStatus(),Status.ERROR_FILTER);
+    }
+
 
 
 }
