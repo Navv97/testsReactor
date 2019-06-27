@@ -24,6 +24,7 @@ public class DishWasherTest {
 
     private DishWasher dishWasher;
     private ProgramConfiguration programConfiguration;
+    private RunResult runResult;
 
     @Before
     public void init(){
@@ -44,6 +45,12 @@ public class DishWasherTest {
         assertEquals(dishWasher.start(programConfiguration).getStatus(),Status.ERROR_FILTER);
     }
 
-
+    @Test
+    public void testIfDirtFilterCapacityIsAcceptable(){
+        programConfiguration = ProgramConfiguration.builder().withProgram(WashingProgram.ECO).withTabletsUsed(true).build();
+        when(door.closed()).thenReturn(false);
+        when(dirtFilter.capacity()).thenReturn(35.0d);
+        assertEquals(dishWasher.start(programConfiguration).getStatus(),Status.ERROR_FILTER);
+    }
 
 }
