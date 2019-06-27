@@ -1,14 +1,14 @@
 package edu.iis.mto.testreactor.exc4;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.when;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.internal.matchers.Null;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DishWasherTest {
@@ -51,6 +51,19 @@ public class DishWasherTest {
         when(door.closed()).thenReturn(false);
         when(dirtFilter.capacity()).thenReturn(35.0d);
         assertEquals(dishWasher.start(programConfiguration).getStatus(),Status.ERROR_FILTER);
+    }
+
+    @Test
+    public void pourMethodShouldThrowExceptionAndErrorPump(){
+        programConfiguration = ProgramConfiguration.builder().withProgram(WashingProgram.ECO).withTabletsUsed(true).build();
+        when(door.closed()).thenReturn(false);
+        when(dirtFilter.capacity()).thenReturn(60.0d);
+        try {
+            Mockito.doThrow(PumpException.class).when(waterPump).pour(programConfiguration.getProgram());
+        } catch (PumpException e) {
+            e.printStackTrace();
+        }
+        assertEquals(dishWasher.start(programConfiguration).getStatus(),Status.ERROR_PUMP);
     }
 
 }
