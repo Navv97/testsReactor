@@ -8,6 +8,8 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -60,6 +62,32 @@ public class DishWasherTest {
         when(dirtFilter.capacity()).thenReturn(60.0d);
         try {
             Mockito.doThrow(PumpException.class).when(waterPump).pour(programConfiguration.getProgram());
+        } catch (PumpException e) {
+            e.printStackTrace();
+        }
+        assertEquals(dishWasher.start(programConfiguration).getStatus(),Status.ERROR_PUMP);
+    }
+
+    @Test
+    public void runProgramMethodShouldThrowExceptionAndErrorProgram(){
+        programConfiguration = ProgramConfiguration.builder().withProgram(WashingProgram.ECO).withTabletsUsed(true).build();
+        when(door.closed()).thenReturn(false);
+        when(dirtFilter.capacity()).thenReturn(60.0d);
+        try {
+            Mockito.doThrow(EngineException.class).when(engine).runProgram(programConfiguration.getProgram().getTimeInMinutes());
+        } catch (EngineException e) {
+            e.printStackTrace();
+        }
+        assertEquals(dishWasher.start(programConfiguration).getStatus(),Status.ERROR_PROGRAM);
+    }
+
+    @Test
+    public void drainMethodShouldThrowExceptionAndErrorPump(){
+        programConfiguration = ProgramConfiguration.builder().withProgram(WashingProgram.ECO).withTabletsUsed(true).build();
+        when(door.closed()).thenReturn(false);
+        when(dirtFilter.capacity()).thenReturn(60.0d);
+        try {
+            Mockito.doThrow(PumpException.class).when(waterPump).drain();
         } catch (PumpException e) {
             e.printStackTrace();
         }
